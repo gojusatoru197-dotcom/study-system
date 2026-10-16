@@ -16,11 +16,11 @@ body,button,.win{user-select:none;-webkit-user-select:none}
 #fx{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
 header{position:fixed;top:env(safe-area-inset-top,0px);inset-inline:0;height:50px;z-index:5;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:var(--pn);border-bottom:1px solid var(--ln);box-shadow:var(--gl)}
 header b{font-family:Orbitron,Cairo,sans-serif;letter-spacing:1px;color:var(--ac);text-shadow:var(--gl)}
-main{position:relative;z-index:1;max-width:600px;margin:0 auto;padding:calc(64px + env(safe-area-inset-top,0px)) 14px calc(150px + env(safe-area-inset-bottom,0px));height:100%;overflow-y:auto}
+main{position:relative;z-index:1;max-width:600px;margin:0 auto;padding:calc(64px + env(safe-area-inset-top,0px)) 14px calc(86px + env(safe-area-inset-bottom,0px));height:100%;overflow-y:auto}
 .tab{display:none}.tab.on{display:block}
 @media (prefers-reduced-motion:no-preference){.tab.on{animation:in .3s ease-out}}
 @keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-nav{position:fixed;bottom:calc(58px + env(safe-area-inset-bottom,0px));inset-inline:0;z-index:5;display:flex;background:var(--pn);border-top:1px solid var(--ln);border-bottom:1px solid var(--ln)}
+nav{position:fixed;bottom:0;inset-inline:0;z-index:5;display:flex;background:var(--pn);border-top:1px solid var(--ln);padding-bottom:env(safe-area-inset-bottom,0px)}
 nav button{flex:1;border:0;border-radius:0;min-height:54px;color:var(--mut);background:transparent;padding:4px;font-size:.85rem}
 nav button.on{color:var(--ac);box-shadow:inset 0 3px 0 var(--ac);text-shadow:var(--gl)}
 .win{position:relative;background:var(--pn);border:1px solid var(--ln);box-shadow:var(--gl),inset 0 0 22px rgba(62,106,255,.12);padding:20px 14px 14px;margin:24px 0 10px}
@@ -85,6 +85,41 @@ h1{font-family:Orbitron,Cairo,sans-serif;font-size:2.2rem;margin:0;color:var(--a
 .bb.u{margin-inline-start:auto;border-color:var(--ac);background:rgba(62,166,255,.1)}
 details{border-top:1px dashed var(--ln);padding:6px 0}summary{cursor:pointer;font-weight:600}
 .sl{font-size:.9rem;padding:2px 0}.sl.c{color:var(--ac2)}.sl.p{color:var(--ok)}.sl.z{color:var(--mut)}
+
+.sd{border:1px solid var(--ln);background:var(--pn);margin:12px 0;padding:6px 10px;box-shadow:var(--gl)}
+.sd summary{display:flex;justify-content:space-between;align-items:center;font-weight:800;padding:8px 0;list-style:none}
+.sd summary::-webkit-details-marker{display:none}
+.it{display:flex;align-items:center;gap:8px;padding:8px;margin:5px 0;border-inline-start:3px solid var(--ln);background:rgba(80,110,200,.08);border-radius:2px}
+.it .tm{font-size:.74rem;color:var(--mut);min-width:86px;white-space:nowrap}
+.it .tx{flex:1;font-size:.92rem;transition:opacity .3s}
+.t-s{border-color:var(--ac)}.t-c{border-color:var(--ac2)}.t-p{border-color:var(--ok)}.t-m{border-color:#f5a524}.t-b{border-color:var(--mut);opacity:.85}.t-z{border-color:var(--mut)}
+.it.dn .tx{text-decoration:line-through;opacity:.45}
+.ck{width:30px;height:30px;min-height:30px;min-width:30px;padding:0;border-radius:7px;font-size:1rem;line-height:1;flex:none}
+.ck.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.gdb{display:flex;justify-content:flex-end;margin-top:14px}.gdb button{min-height:34px;padding:2px 14px;font-size:.85rem;border-color:var(--ac2);color:var(--ac2)}
+.ov p{max-height:58vh;overflow:auto;padding-inline-end:4px}
+@media (prefers-reduced-motion:no-preference){
+.tab.on .win,.tab.on .sd{animation:wi .55s cubic-bezier(.2,.8,.2,1) both}
+.tab.on .win:nth-child(3){animation-delay:.07s}.tab.on .win:nth-child(4){animation-delay:.14s}.tab.on .win:nth-child(5){animation-delay:.21s}.tab.on .win:nth-child(6){animation-delay:.28s}
+.it,.t{animation:slin .4s ease-out both}
+.pulse{animation:pu 1s infinite}
+.win{transition:box-shadow .3s}.st{transition:transform .2s,border-color .2s}.st:hover{transform:translateY(-3px)}
+.ck.on{animation:pk .3s}
+nav button{transition:color .2s,box-shadow .2s}
+.rkl{animation:glow 3s ease-in-out infinite}
+}
+@keyframes wi{from{opacity:0;transform:translateY(20px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes slin{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
+@keyframes pu{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.55;transform:scale(1.07)}}
+@keyframes pk{0%{transform:scale(.6)}60%{transform:scale(1.25)}100%{transform:scale(1)}}
+@keyframes glow{0%,100%{text-shadow:var(--gl)}50%{text-shadow:0 0 22px var(--ac)}}
+
+:root{--hdt:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--hdt:#03122e}}
+:root[data-theme="dark"]{--hdt:#03122e}
+.hd{background:var(--ac);color:var(--hdt);border:2px solid var(--ac);padding:2px 20px;font-size:1rem;top:-17px;letter-spacing:.3px;z-index:2;box-shadow:0 0 16px var(--ac),0 3px 0 rgba(0,0,0,.25)}
+.bad .hd{background:var(--bad);border-color:var(--bad);color:#fff;box-shadow:0 0 16px var(--bad),0 3px 0 rgba(0,0,0,.25)}
+.win{margin-top:28px}
 </style>
 </head>
 <body>
@@ -92,6 +127,7 @@ details{border-top:1px dashed var(--ln);padding:6px 0}summary{cursor:pointer;fon
 <header><b>[ النظام ]</b><button id="ex" class="d" style="min-height:34px;padding:2px 12px">خروج ⏻</button></header>
 <main>
 <section class="tab on" id="t0">
+  <div class="gdb"><button class="gd" data-g="0">عرض الدليل</button></div>
   <div class="win"><div class="hd">[ نافذة الحالة ]</div>
     <div class="top">
       <div class="emb" id="emb"><svg viewBox="0 0 100 100"><polygon class="rg" points="50,4 90,27 90,73 50,96 10,73 10,27" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--ac)"/><polygon class="rg2" points="50,14 81,32 81,68 50,86 19,68 19,32" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="4 4" style="color:var(--ac2)"/></svg><div class="rkl" id="rk">E</div></div>
@@ -107,7 +143,7 @@ details{border-top:1px dashed var(--ln);padding:6px 0}summary{cursor:pointer;fon
   <div class="win"><div class="hd">[ الصلاة ]</div>
     <div style="text-align:center"><span class="mut">الصلاة القادمة:</span> <b id="pn"></b><div class="eod" id="pc" style="color:var(--ac)"></div></div>
     <div id="pl" style="margin-top:8px"></div>
-    <div class="mut" style="margin-top:6px">سجّل صلاتك خلال 10 دقائق من دخول الوقت وإلا خُصم 10 XP.</div>
+    <div class="mut" style="margin-top:6px">سجّل صلاتك خلال 10 دقائق من دخول الوقت لتأخذ +5 XP، وإلا خُصم 10 XP.</div>
   </div>
   <div class="win"><div class="hd">[ اليوم ]</div>
     <div>حصة التركيز: <b class="num" id="qm">0</b> / <b class="num" id="qt">0</b> دقيقة</div>
@@ -119,6 +155,7 @@ details{border-top:1px dashed var(--ln);padding:6px 0}summary{cursor:pointer;fon
 </section>
 
 <section class="tab" id="t1">
+  <div class="gdb"><button class="gd" data-g="1">عرض الدليل</button></div>
   <div class="win"><div class="hd">[ المهام والمتراكم ]</div>
     <div class="row"><select id="ts" aria-label="المادة"></select><input id="tn" placeholder="اسم المهمة أو الدرس المتراكم"></div>
     <div class="row" style="margin-top:8px"><input id="tm" type="number" min="10" value="60" style="max-width:90px" aria-label="دقائق"><span class="mut">دقيقة</span><button id="add" style="flex:1">إضافة</button><button id="free" class="g">جلسة حرة 25د</button></div>
@@ -128,14 +165,16 @@ details{border-top:1px dashed var(--ln);padding:6px 0}summary{cursor:pointer;fon
 </section>
 
 <section class="tab" id="t2">
+  <div class="gdb"><button class="gd" data-g="2">عرض الدليل</button></div>
   <div class="win"><div class="hd">[ منظّم الوقت ]</div>
-    <div class="mut" style="margin-bottom:8px">يبني جدولاً يفرّغ المتراكم مع حساب الدروس الجديدة (مراجعة بعد كل حصة) وبقية المواد، حول الصلاة والنوم.</div>
+    <div class="mut" style="margin-bottom:8px">يبني جدولاً يفرّغ المتراكم مع حساب الدروس الجديدة (مراجعة بعد كل حصة) وبقية المواد، حول الصلاة والنوم والوجبات والاستراحات.</div>
     <div class="row"><select id="sp"><option value="1">يومي</option><option value="7" selected>أسبوعي</option><option value="30">شهري</option></select><button id="sg" style="flex:1">أنشئ جدولاً مثالياً</button></div>
   </div>
   <div id="sched"></div>
 </section>
 
 <section class="tab" id="t4">
+  <div class="gdb"><button class="gd" data-g="3">عرض الدليل</button></div>
   <div class="win"><div class="hd">[ المواد ومواعيد الحصص ]</div><div id="sub-ed"></div>
     <div class="row" style="margin-top:10px"><input id="sn" placeholder="مادة جديدة"><button id="sa">إضافة</button></div></div>
   <div class="win"><div class="hd">[ الموقع للصلاة ]</div><div class="row"><select id="city"></select><button id="gps">موقعي</button></div><div class="mut" id="locn"></div></div>
@@ -144,8 +183,9 @@ details{border-top:1px dashed var(--ln);padding:6px 0}summary{cursor:pointer;fon
     <div class="mut" id="bl" style="margin-top:6px"></div><div class="mut">أسبوعي: +80% = +200 XP، وأقل = -50. الترقية تحتاج +80%، والرسوب = -100.</div></div>
   <div class="win bad"><div class="hd">[ خطر ]</div><button id="rs" class="d">إعادة ضبط كاملة</button></div>
 </section>
+<section class="tab" id="tg"><div class="win"><div class="hd">[ الدليل ]</div><div class="mut" style="margin-bottom:6px">شرح كل شيء في النظام. وفي كل تبويب زر «عرض الدليل» يشرح لك ما أمامك مباشرة.</div><div id="gl"></div></div></section>
 </main>
-<nav><button data-t="0" class="on">الحالة</button><button data-t="1">المهام</button><button data-t="2">الجدول</button><button data-t="3">المزيد</button></nav>
+<nav><button data-t="0" class="on">الحالة</button><button data-t="1">المهام</button><button data-t="2">الجدول</button><button data-t="3">المزيد</button><button data-t="4">الدليل</button></nav>
 
 <div class="full" id="fo"><div style="padding-top:30px;text-align:center">
   <div class="ring"><svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="88" stroke="rgba(80,110,200,.25)"/><circle id="rp" cx="100" cy="100" r="88" stroke-dasharray="552.9" stroke-dashoffset="552.9"/></svg><div id="clock">25:00</div></div>
@@ -186,6 +226,7 @@ const p2=n=>String(n).padStart(2,"0"),day=(d=new Date())=>d.getFullYear()+"-"+p2
 let S;try{S=JSON.parse(localStorage.getItem(K))}catch(e){}
 if(!S)S={ob:false,name:"",g:"m",track:"",loc:{n:"القاهرة",lat:30.04,lng:31.24},xp:0,rank:0,quota:180,tasks:[],subs:{},streak:0,miss:0,last:day(),min:{},boss:[],pr:{},chat:{},notes:{},sched:null,slp:""};
 const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
+if(!S.chk)S.chk={};
 (function(){const o=["جبر وهندسة","تفاضل وتكامل","ميكانيكا"],h=o.filter(k=>S.subs&&S.subs[k]);if(!h.length)return;const m=S.subs["رياضة"]||{xp:0,slots:[]};h.forEach(k=>{m.xp+=S.subs[k].xp;m.slots=m.slots.concat(S.subs[k].slots);delete S.subs[k];S.tasks.forEach(t=>{if(t.subj===k)t.subj="رياضة"});if(S.chat[k]){S.chat["رياضة"]=(S.chat["رياضة"]||[]).concat(S.chat[k]);delete S.chat[k]}if(S.notes[k]){S.notes["رياضة"]=(S.notes["رياضة"]||"")+S.notes[k]+"\n";delete S.notes[k]}});S.subs["رياضة"]=m;save()})();
 (function(){if(S.track!=="art")return;const r=["فلسفة ومنطق","علم نفس واجتماع"];let ch=0;r.forEach(k=>{if(S.subs[k]){delete S.subs[k];ch=1}S.tasks.forEach(t=>{if(t.subj===k){t.subj="عام";ch=1}});if(S.chat&&S.chat[k])delete S.chat[k];if(S.notes&&S.notes[k])delete S.notes[k]});if(!S.subs["إحصاء"]){S.subs["إحصاء"]={xp:0,slots:[]};ch=1}if(ch)save()})();
 const nextT=()=>S.rank<5?R[S.rank+1][1]:null,canTrial=()=>nextT()!==null&&S.xp>=nextT();
@@ -214,10 +255,10 @@ function flash(){if(RM)return;const e=document.createElement("div");e.className=
 // ---- modal
 let Q=[],cur=null,th;
 function type(el,t){clearInterval(th);if(RM){el.textContent=t;return}el.textContent="";let i=0;th=setInterval(()=>{el.textContent=t.slice(0,++i);if(i>=t.length)clearInterval(th)},16)}
-function ask(h,t,bad,yes){Q.push([h,t,bad,yes]);if($("ov").style.display!=="grid")nextMsg()}
+function ask(h,t,bad,yes,inst){Q.push([h,t,bad,yes,inst]);if($("ov").style.display!=="grid")nextMsg()}
 const msg=(h,t,bad)=>{ask(h,t,bad);if(bad)shake()};
 function nextMsg(){cur=Q.shift();if(!cur){$("ov").style.display="none";$("ov").classList.remove("on");return}
- $("oh").textContent="[ "+cur[0]+" ]";type($("ot"),cur[1]);$("ovw").className="win"+(cur[2]?" bad":"");$("no").hidden=!cur[3];$("ov").style.display="grid";$("ov").classList.add("on");$("ok").textContent=cur[3]?"تأكيد":"قبول"}
+ $("oh").textContent="[ "+cur[0]+" ]";if(cur[4]){clearInterval(th);$("ot").textContent=cur[1]}else type($("ot"),cur[1]);$("ovw").className="win"+(cur[2]?" bad":"");$("no").hidden=!cur[3];$("ov").style.display="grid";$("ov").classList.add("on");$("ok").textContent=cur[3]?"تأكيد":"قبول"}
 $("ok").onclick=()=>{const y=cur&&cur[3];nextMsg();if(y)y()};$("no").onclick=nextMsg;
 function gain(n,sub,note){const was=canTrial();S.xp=Math.max(0,S.xp+n);if(sub&&n>0&&S.subs[sub])S.subs[sub].xp+=n;save();render();
  float((n>=0?"+":"")+n+" XP",n<0);if(n<0)shake();if(note)msg(n>=0?"تم":"خصم",note,n<0);
@@ -230,11 +271,13 @@ function gain(n,sub,note){const was=canTrial();S.xp=Math.max(0,S.xp+n);if(sub&&n
   d.setDate(d.getDate()+1);n++}
  if(S.miss>=3){S.miss=0;if(S.rank>0){S.rank--;S.xp=Math.min(S.xp,R[S.rank+1][1]-1);L.push("هبوط إلى الرتبة "+R[S.rank][0])}}
  const od=S.tasks.length;if(od)L.push("متراكم عليك "+od+" مهمة.");
- for(const k in S.pr)if(k<t)delete S.pr[k];S.last=t;save();msg("تقرير الأمس",L.join("\n"),fail)})();
+ for(const k in S.pr)if(k<t)delete S.pr[k];for(const k in S.chk)if(k.slice(0,10)<t)delete S.chk[k];S.last=t;save();msg("تقرير الأمس",L.join("\n"),fail)})();
 // ---- render
+var xpShown=0;
+function cnt(){const t=S.xp;if(RM||xpShown===t){xpShown=t;$("xp").textContent=t;return}const a=xpShown,st=performance.now();(function f(n){const q=Math.min(1,(n-st)/600);xpShown=Math.round(a+(t-a)*q);$("xp").textContent=xpShown;if(q<1)requestAnimationFrame(f)})(st)}
 const back=s=>S.tasks.filter(x=>x.subj===s).reduce((a,b)=>a+b.min,0);
 function render(){
- if(!S.ob)return;const r=S.rank;$("rk").textContent=R[r][0];$("nm").textContent=S.name;$("ti").textContent="— "+R[r][2];$("lv").textContent=Math.floor(S.xp/60)+1;$("xp").textContent=S.xp;
+ if(!S.ob)return;const r=S.rank;$("rk").textContent=R[r][0];$("nm").textContent=S.name;$("ti").textContent="— "+R[r][2];$("lv").textContent=Math.floor(S.xp/60)+1;cnt();
  const lo=R[r][1],hi=nextT();$("xb").style.width=hi?Math.min(100,Math.max(0,(S.xp-lo)/(hi-lo)*100))+"%":"100%";
  $("nx").textContent=hi?(canTrial()?"— الترقية متاحة":"— باقي "+(hi-S.xp)):"";$("sk").textContent=S.streak;$("ms").textContent=S.miss;
  const m=S.min[day()]||0;$("qm").textContent=m;$("qt").textContent=S.quota;$("qb").style.width=Math.min(100,m/S.quota*100)+"%";
@@ -249,7 +292,7 @@ function render(){
  PR.forEach(([k,nmz])=>{const s=P[k]||{},t=mn+T[k]*36e5,row=document.createElement("div");row.className="pr";
   row.innerHTML="<span>"+nmz+" <span class='mut num'>"+fm(T[k]*60)+"</span></span>";
   if(s.d){row.insertAdjacentHTML("beforeend","<span class='ok'>✓ تمت</span>")}
-  else{const b=document.createElement("button");b.textContent=s.p?"سجّل متأخراً":"صليت";b.disabled=now<t;if(s.p)b.className="d";b.onclick=()=>{(S.pr[day()][k]=S.pr[day()][k]||{}).d=1;save();render();float("✓")};row.appendChild(b)}
+  else{const b=document.createElement("button");b.textContent=s.p?"سجّل متأخراً":"صليت";b.disabled=now<t;if(s.p)b.className="d";b.onclick=()=>{const q=S.pr[day()][k]=S.pr[day()][k]||{},ok=!q.p;q.d=1;save();if(ok)gain(5,null);else{render();float("✓")}};row.appendChild(b)}
   pl.appendChild(row)});
  // tasks
  const sel=$("ts"),pv=sel.value;sel.innerHTML=ks.concat(["عام"]).map(x=>"<option>"+x+"</option>").join("");if(pv)sel.value=pv;
@@ -266,17 +309,27 @@ function render(){
 }
 function tick1(){if(!S.ob)return;const n=new Date(),T=times(n),mn=midn().getTime(),p=$("pc");let nx=null;
  PR.forEach(([k,nmz])=>{const t=mn+T[k]*36e5;if(!nx&&t>n)nx=[nmz,t]});if(!nx){nx=["الفجر",midn(tmw()).getTime()+times(tmw()).fajr*36e5]}
- $("pn").textContent=nx[0];let s=Math.max(0,Math.floor((nx[1]-n)/1000));p.textContent=p2(Math.floor(s/3600))+":"+p2(Math.floor(s%3600/60))+":"+p2(s%60);
+ $("pn").textContent=nx[0];let s=Math.max(0,Math.floor((nx[1]-n)/1000));p.textContent=p2(Math.floor(s/3600))+":"+p2(Math.floor(s%3600/60))+":"+p2(s%60);p.classList.toggle("pulse",s<600);
  s=Math.floor((midn(tmw())-n)/1000);$("eod").textContent="نهاية اليوم بعد "+p2(Math.floor(s/3600))+":"+p2(Math.floor(s%3600/60))+":"+p2(s%60);
  const P=S.pr[day()]||(S.pr[day()]={});let ch=0;
  PR.forEach(([k,nmz])=>{const t=mn+T[k]*36e5,s=P[k]||(P[k]={});if(s.x)return;
-  if(n>=t&&!s.n){s.n=1;ch=1;if(n-t<6e5&&!s.d)msg("حان وقت الصلاة","حان الآن وقت صلاة "+nmz+".\nسجّل صلاتك خلال 10 دقائق وإلا خُصم 10 XP.")}
+  if(n>=t&&!s.n){s.n=1;ch=1;if(n-t<6e5&&!s.d)msg("حان وقت الصلاة","حان الآن وقت صلاة "+nmz+".\nسجّل صلاتك خلال 10 دقائق لتأخذ +5 XP، وإلا خُصم 10 XP.")}
   if(n-t>=6e5&&!s.d&&!s.p){s.p=1;ch=1;gain(-10,null,"لم تسجّل صلاة "+nmz+" خلال 10 دقائق. -10 XP")}});
  const sw=sleepWin(),m=n.getHours()*60+n.getMinutes();if(m>=sw.night&&S.slp!==day()){S.slp=day();ch=1;msg("وقت النوم","حان وقت نومك. ستستيقظ قبل الفجر بـ20 دقيقة. نوم 6 ساعات يثبّت ما درسته.")}
  if(ch){save();render()}}
 setInterval(tick1,1000);
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>show(+b.dataset.t));
-function show(i){document.querySelectorAll("nav button").forEach((x,j)=>x.classList.toggle("on",j===i));document.querySelectorAll(".tab").forEach((t,j)=>t.classList.toggle("on",j===i));if(i===3)moreUI();if(i===2)schedUI();$("sub-ed").dataset.i=i;document.querySelector("main").scrollTop=0}
+function show(i){document.querySelectorAll("nav button").forEach((x,j)=>x.classList.toggle("on",j===i));document.querySelectorAll(".tab").forEach((t,j)=>t.classList.toggle("on",j===i));if(i===3)moreUI();if(i===4)guideUI();if(i===2)schedUI();$("sub-ed").dataset.i=i;document.querySelector("main").scrollTop=0}
+// ---- guide
+const G=[
+{t:"الحالة",x:"• الرتبة والمستوى: كل XP تكسبه يرفع مستواك. الرتبة (E ثم D ثم C...) تحتاج XP كافياً ثم امتحان ترقية بدرجة 80% أو أكثر من المزيد ← البوابة.\n• الصلاة: العداد يعرض الصلاة القادمة. دوس «صليت» بعد دخول الوقت. لو سجلت خلال 10 دقائق تأخذ +5 XP، ولو مرت 10 دقائق بدون تسجيل يُخصم 10 XP.\n• اليوم: حصة التركيز اليومية بالدقائق. لو لم تكملها يُخصم 100 XP في آخر اليوم، وتزيد 15 دقيقة تلقائياً بعد كل 3 أيام نجاح.\n• النوم: 6 ساعات وتستيقظ قبل الفجر بـ20 دقيقة، ولا تعمل جلسات التركيز وقت النوم.\n• القدرات: مستوى كل مادة والمتراكم عليها، وأضعف مادة تظهر بالأحمر."},
+{t:"المهام",x:"• إضافة مهمة: اختر المادة، اكتب الاسم والمدة بالدقائق، ثم «إضافة». أنت وحدك من يضيف المهام.\n• ابدأ: يفتح مؤقتاً بمدة المهمة. عند إكماله كاملاً بدون خروج من الصفحة تأخذ XP + بونص 20% وتُحذف المهمة تلقائياً.\n• المتراكم: المهمة غير المنجزة تبقى وتظهر «متراكمة N يوم»، وتعطي 25% XP إضافية عند إنجازها. لتسجيل متراكم في مادة، أضفه كمهمة واختر المادة.\n• الحذف اليدوي متاح لدقيقتين فقط بعد الإضافة.\n• الجلسة الحرة 25د: تركيز بدون مهمة محددة.\n• الخروج من الصفحة أثناء الجلسة: -10 XP، وثلاث مرات = فشل الجلسة. الانسحاب = -20 XP."},
+{t:"الجدول",x:"• اختر يومي أو أسبوعي أو شهري ثم «أنشئ جدولاً مثالياً».\n• يحسب المتراكم والدروس الجديدة (مراجعة بعد كل حصة) وبقية المواد، حول الصلاة والنوم والوجبات والاستراحات.\n• الوجبات: فطار وغداء ووجبة مساء. الاستراحة 15 دقيقة تأتي بعد نحو ساعة ونصف من المذاكرة المتواصلة، ولا تُفصل المحاضرة عن نفسها.\n• المربع بجانب كل بند دراسة أو حصة: يشطبه ويعلن أنك خلصته فقط. لا يضيف XP ولا يحذف المهمة. الـ XP يأتي فقط من إكمال المهمة بالمؤقت لكامل مدتها.\n• أعد إنشاء الجدول كلما أضفت مهام جديدة أو غيّرت مواعيد الحصص."},
+{t:"المزيد",x:"• المواد ومواعيد الحصص: لكل مادة اختر أوفلاين (يوم ووقت) أو أونلاين (محاضرات مسجلة: اليوم وعددها بدون ساعة). اضغط على أي موعد لحذفه. ويمكنك إضافة مادة جديدة.\n• الموقع للصلاة: اختر مدينتك أو دوس «موقعي» لمواقيت أدق.\n• البوابة: امتحان أسبوعي (80% أو أكثر = +200 XP، وأقل = -50)، وامتحان الترقية عند توفر XP كافٍ (80% أو أكثر للترقية، والرسوب = -100).\n• إعادة ضبط كاملة: تمسح كل بياناتك نهائياً."}
+];
+const G2=G.concat([{t:"القفل والخروج",x:"• عند التفعيل: شاشة كاملة، وبقاء الشاشة مضاءة، ومنع زر الرجوع.\n• للخروج دوس «خروج ⏻» وأكد.\n• خروجك من الصفحة أثناء جلسة تركيز يخصم XP."},{t:"البيانات",x:"• بياناتك محفوظة في متصفحك فقط على هذا الجهاز.\n• مسح بيانات المتصفح أو التصفح الخاص يمسح تقدمك.\n• افتح النظام دائماً من نفس المتصفح ونفس الرابط."}]);
+document.querySelectorAll(".gd").forEach(b=>b.onclick=()=>{const g=G[+b.dataset.g];ask("دليل: "+g.t,g.x,0,null,1)});
+function guideUI(){const c=$("gl");if(c.dataset.b)return;c.dataset.b=1;G2.forEach((g,i)=>{const d=document.createElement("details");if(i===0)d.open=true;const m=document.createElement("summary");m.textContent=g.t;const q=document.createElement("div");q.className="mut";q.style.cssText="white-space:pre-line;padding:6px 0";q.textContent=g.x;d.append(m,q);c.appendChild(d)})}
 // ---- slots editor
 function slotEd(s,box){box.innerHTML="";const o=S.subs[s],md=o.mode||"off",mr=document.createElement("div");mr.className="row";mr.style.marginBottom="6px";
  [["off","أوفلاين (بموعد)"],["on","أونلاين (مسجلة)"]].forEach(([v,l])=>{const b=document.createElement("button");b.textContent=l;if(v===md)b.className="sel";b.onclick=()=>{o.mode=v;save();slotEd(s,box)};mr.appendChild(b)});box.appendChild(mr);
@@ -324,31 +377,46 @@ $("free").onclick=()=>start(25,null);
 $("stop").onclick=()=>ask("تأكيد الانسحاب","الانسحاب يخصم 20 XP. هل أنت متأكد؟",true,()=>{if(T)abort(20,"انسحبت من الجلسة.")});
 document.addEventListener("visibilitychange",()=>{if(T&&document.hidden)T.hid=true;else if(!document.hidden){if(T&&T.hid){T.hid=false;leave()}if(LK)wake()}});
 // ---- schedule planner
-function plan(n){const now=new Date(),bq=S.tasks.slice().sort((a,b)=>a.id-b.id).map(t=>({subj:t.subj,label:t.title,rem:t.min,old:t.date<day()})),
- ks=Object.keys(S.subs).sort((a,b)=>S.subs[a].xp-S.subs[b].xp),rev=[],days=[];let mi=0,c=0,last="",clr=-1,newN=0;const tot=bq.reduce((a,b)=>a+b.rem,0);
+function plan(n){const now=new Date(),bq=S.tasks.slice().sort((a,b)=>a.id-b.id).map(t=>({subj:t.subj,label:t.title,rem:t.min})),
+ ks=Object.keys(S.subs).sort((a,b)=>S.subs[a].xp-S.subs[b].xp),rev=[],days=[];let mi=0,c=0,clr=-1,newN=0;const tot=bq.reduce((a,b)=>a+b.rem,0);
  for(let i=0;i<n;i++){const d=new Date(now.getFullYear(),now.getMonth(),now.getDate()+i,12),T1=times(d),T2=times(new Date(d.getTime()+864e5)),
   wake=Math.round(T1.fajr*60-20),sl=Math.round(T2.fajr*60+1440-380),ev=[];
   PR.forEach(([k,nmz])=>{const s=Math.round(T1[k]*60);ev.push({s,e:s+15,t:"p",x:"صلاة "+nmz})});
+  [[wake+60,30,"الفطار"],[870,45,"الغداء"],[1230,30,"وجبة المساء"]].forEach(([s,l,x])=>{ev.filter(e=>e.t==="p").forEach(p=>{if(s<p.e&&s+l>p.s)s=p.e});ev.push({s,e:s+l,t:"m",x})});
   Object.keys(S.subs).forEach(s=>S.subs[s].slots.forEach(q=>{if(q.d===d.getDay()){if(S.subs[s].mode==="on")rev.push({subj:s,rem:135,after:0,day:i,label:"محاضرة "+s+" المسجلة (مشاهدة ومراجعة)"});else if(q.t){const a=tm(q.t);ev.push({s:a,e:a+90,t:"c",x:"حصة "+s});rev.push({subj:s,rem:45,after:a+90,day:i,label:"مراجعة درس "+s+" الجديد"})}else return;newN++}}));
   let from=wake;if(i===0)from=Math.max(wake,Math.ceil((now.getHours()*60+now.getMinutes()+5)/5)*5);
   ev.sort((a,b)=>a.s-b.s);const gaps=[];let cu=from;ev.forEach(e=>{if(e.e<=cu)return;if(e.s>cu)gaps.push([cu,Math.min(e.s,sl)]);cu=Math.max(cu,e.e)});if(cu<sl)gaps.push([cu,sl]);
-  gaps.forEach(g=>{let a=g[0];const b=g[1];while(b-a>=30){const len=Math.min(50,b-a);let it=null,lab="",sub="",kind="";
+  gaps.forEach(g=>{let a=g[0],run=0,prev=null;const b=g[1];while(b-a>=25){
+   let it=null,sub="",kind="",lab="";
    const r=rev.find(x=>x.rem>0&&(x.day<i||x.after<=a));
    if(r){it=r;kind="new";sub=r.subj;lab=r.label}
-   else if(bq.some(x=>x.rem>0)&&(c%4!==3||!ks.length)){it=bq.find(x=>x.rem>0&&x.subj!==last)||bq.find(x=>x.rem>0);kind="old";sub=it.subj;lab=it.label;c++}
+   else if(bq.some(x=>x.rem>0)&&(c%4!==3||!ks.length)){it=bq.find(x=>x.rem>0);kind="old";sub=it.subj;lab=it.label;c++}
    else if(ks.length){sub=ks[mi++%ks.length];lab="مراجعة عامة";kind="gen";c++}
    else break;
-   const m=it?Math.min(len,it.rem):len;if(m<15&&it){it.rem=0;continue}if(it)it.rem-=m;last=sub;
-   ev.push({s:a,e:a+m,t:"s",x:sub+" — "+lab+(kind==="old"?" (متراكم)":kind==="new"?" (جديد)":"")});a+=m+10}});
+   const m=Math.min(b-a,it?it.rem:45,100);if(m<15){if(it){it.rem=0;continue}break}
+   if(it)it.rem-=m;const x=sub+" — "+lab+(kind==="old"?" (متراكم)":"");
+   if(prev&&prev.e===a&&prev.x===x)prev.e+=m;else{prev={s:a,e:a+m,t:"s",x};ev.push(prev)}
+   a+=m;run+=m;if(run>=90&&(!it||it.rem<=0)&&b-a>=40){ev.push({s:a,e:a+15,t:"b",x:"استراحة"});a+=15;run=0;prev=null}}});
   if(clr<0&&bq.length&&bq.every(x=>x.rem<=0))clr=i;
   ev.push({s:wake,e:wake,t:"z",x:"الاستيقاظ"},{s:sl,e:sl,t:"z",x:"النوم"});ev.sort((a,b)=>a.s-b.s||(a.t==="z"?-1:1));
-  days.push({l:(i===0?"اليوم":DN[d.getDay()])+" — "+day(d),ev:ev.map(e=>[fm(e.s)+(e.e>e.s?"–"+fm(e.e):""),e.t,e.x])})}
+  const dk=day(d),vis=i===0?ev.filter(e=>e.e>=from):ev;
+  days.push({l:(i===0?"اليوم":DN[d.getDay()])+" — "+dk,ev:vis.map(e=>[fm(e.s)+(e.e>e.s?"–"+fm(e.e):""),e.t,e.x,(e.t==="s"||e.t==="c")?dk+"|"+e.s+"|"+e.x:""])})}
  const left=bq.reduce((a,b)=>a+Math.max(0,b.rem),0);
  return{p:n,at:day(),days,sum:"المتراكم "+tot+" دقيقة، "+(bq.length?(left?"لن ينتهي كله في هذه الفترة (تبقى "+left+" دقيقة).":"ينتهي بالكامل خلال "+((clr<0?0:clr)+1)+" يوم."):"لا يوجد متراكم.")+" الدروس الجديدة المحسوبة: "+newN+" (مراجعة 45 دقيقة بعد كل حصة)، مع تدوير بقية المواد من الأضعف للأقوى."}}
 function schedUI(){const c=$("sched");c.innerHTML="";const p=S.sched;if(!p)return;
- const s=document.createElement("div");s.className="win";s.innerHTML="<div class='hd'>[ الجدول ]</div><div class='mut'></div>";s.lastChild.textContent="أُنشئ "+p.at+" — "+p.sum;c.appendChild(s);
- p.days.forEach((d,i)=>{const e=document.createElement("details");if(i===0)e.open=true;const sm=document.createElement("summary");sm.textContent=d.l;e.appendChild(sm);
-  d.ev.forEach(x=>{const r=document.createElement("div");r.className="sl "+x[1];r.textContent=x[0]+"  "+x[2];e.appendChild(r)});s.appendChild(e)})}
+ const s=document.createElement("div");s.className="win";s.innerHTML="<div class='hd'>[ الجدول ]</div><div class='mut'></div>";s.lastChild.textContent="أُنشئ "+p.at+" — "+p.sum+" المربع للتعليم فقط ولا يضيف XP.";c.appendChild(s);
+ const IC={c:"🏫",s:"📚",p:"🕌",m:"🍽",b:"☕",z:"🌙"};
+ p.days.forEach((d,i)=>{const e=document.createElement("details");e.className="sd";if(i===0)e.open=true;
+  const ds=d.ev.filter(y=>y[3]),sm=document.createElement("summary");sm.innerHTML="<span></span><span class='mut num'></span>";sm.firstChild.textContent=d.l;
+  const upd=()=>{sm.lastChild.textContent=ds.filter(y=>S.chk[y[3]]).length+"/"+ds.length};upd();e.appendChild(sm);
+  d.ev.forEach((x,j)=>{const r=document.createElement("div"),dn=x[3]&&S.chk[x[3]];r.className="it t-"+x[1]+(dn?" dn":"");r.style.animationDelay=Math.min(j*35,700)+"ms";
+   r.innerHTML="<span class='tm num'></span><span class='ic'></span><span class='tx'></span>";
+   r.children[0].textContent=x[0];r.children[1].textContent=x[1]==="z"?(x[2]==="الاستيقاظ"?"⏰":"🌙"):IC[x[1]];r.children[2].textContent=x[2];
+   if(x[3]){const b=document.createElement("button");b.className="ck"+(dn?" on":"");b.setAttribute("aria-label","تم");b.textContent=dn?"✓":"";
+    b.onclick=()=>{const on=!S.chk[x[3]];if(on)S.chk[x[3]]=1;else delete S.chk[x[3]];save();r.classList.toggle("dn",on);b.classList.toggle("on",on);b.textContent=on?"✓":"";upd();
+     if(on){float("✓ خلصت");if(!S.ckInfo){S.ckInfo=1;save();msg("تم التعليم","علّمت هذا البند كمخلص في الجدول.\nالمربع للتعليم فقط ولا يضيف XP. الـ XP يأتي من إكمال المهمة بالمؤقت من تبويب المهام.")}}};
+    r.appendChild(b)}
+   e.appendChild(r)});c.appendChild(e)})}
 $("sg").onclick=()=>{if(!Object.keys(S.subs).length)return;S.sched=plan(+$("sp").value);save();schedUI();float("✓")};
 // ---- gate / reset
 $("bb").onclick=()=>{const v=+$("bs").value;if($("bs").value===""||v<0||v>100)return;$("bs").value="";
