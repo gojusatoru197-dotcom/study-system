@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>النظام</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Orbitron:wght@500;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Orbitron:wght@500;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <style>
 :root{--bg:#e8edfb;--pn:rgba(255,255,255,.92);--ln:#9db4e8;--tx:#10183a;--mut:#53608f;--ac:#1f6bff;--ac2:#6a3cff;--bad:#d4203f;--ok:#0e9f6e;--gl:none;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#03050f;--pn:rgba(8,16,44,.88);--ln:#1f4fb8;--tx:#d9e6ff;--mut:#7f95c9;--ac:#3ea6ff;--ac2:#8f6bff;--bad:#ff4560;--ok:#35e6b0;--gl:0 0 14px rgba(62,166,255,.5);color-scheme:dark}}
@@ -16,11 +16,11 @@ body,button,.win{user-select:none;-webkit-user-select:none}
 #fx{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
 header{position:fixed;top:env(safe-area-inset-top,0px);inset-inline:0;height:50px;z-index:5;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:var(--pn);border-bottom:1px solid var(--ln);box-shadow:var(--gl)}
 header b{font-family:Orbitron,Cairo,sans-serif;letter-spacing:1px;color:var(--ac);text-shadow:var(--gl)}
-main{position:relative;z-index:1;max-width:600px;margin:0 auto;padding:calc(64px + env(safe-area-inset-top,0px)) 14px calc(86px + env(safe-area-inset-bottom,0px));height:100%;overflow-y:auto}
+main{position:relative;z-index:1;max-width:600px;margin:0 auto;padding:calc(64px + env(safe-area-inset-top,0px)) 14px calc(150px + env(safe-area-inset-bottom,0px));height:100%;overflow-y:auto}
 .tab{display:none}.tab.on{display:block}
 @media (prefers-reduced-motion:no-preference){.tab.on{animation:in .3s ease-out}}
 @keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-nav{position:fixed;bottom:0;inset-inline:0;z-index:5;display:flex;background:var(--pn);border-top:1px solid var(--ln);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav{position:fixed;bottom:calc(58px + env(safe-area-inset-bottom,0px));inset-inline:0;z-index:5;display:flex;background:var(--pn);border-top:1px solid var(--ln);border-bottom:1px solid var(--ln)}
 nav button{flex:1;border:0;border-radius:0;min-height:54px;color:var(--mut);background:transparent;padding:4px;font-size:.85rem}
 nav button.on{color:var(--ac);box-shadow:inset 0 3px 0 var(--ac);text-shadow:var(--gl)}
 .win{position:relative;background:var(--pn);border:1px solid var(--ln);box-shadow:var(--gl),inset 0 0 22px rgba(62,106,255,.12);padding:20px 14px 14px;margin:24px 0 10px}
@@ -179,7 +179,7 @@ details{border-top:1px dashed var(--ln);padding:6px 0}summary{cursor:pointer;fon
 const R=[["E",0,"مبتدئ"],["D",500,"متدرب"],["C",1500,"صياد"],["B",3500,"نخبة"],["A",7000,"قائد"],["S",12000,"ملك الظل"]];
 const DN=["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
 const PR=[["fajr","الفجر"],["dhuhr","الظهر"],["asr","العصر"],["maghrib","المغرب"],["isha","العشاء"]];
-const TR={sci:["أحياء","كيمياء","فيزياء"],math:["رياضة","فيزياء","كيمياء"],art:["تاريخ","جغرافيا","فلسفة ومنطق","علم نفس واجتماع"]},TN={sci:"علمي علوم",math:"علمي رياضة",art:"أدبي"},COM=["عربي","إنجليزي","لغة ثانية"];
+const TR={sci:["أحياء","كيمياء","فيزياء"],math:["رياضة","فيزياء","كيمياء"],art:["تاريخ","جغرافيا","إحصاء"]},TN={sci:"علمي علوم",math:"علمي رياضة",art:"أدبي"},COM=["عربي","إنجليزي","لغة ثانية"];
 const CT=[["القاهرة",30.04,31.24],["الإسكندرية",31.2,29.92],["الجيزة",30.01,31.21],["طنطا",30.79,31],["المنصورة",31.04,31.38],["بورسعيد",31.26,32.3],["السويس",29.97,32.53],["أسيوط",27.18,31.18],["الأقصر",25.69,32.64],["أسوان",24.09,32.9]];
 const K="solo-study-v4",$=i=>document.getElementById(i),RM=matchMedia("(prefers-reduced-motion:reduce)").matches;
 const p2=n=>String(n).padStart(2,"0"),day=(d=new Date())=>d.getFullYear()+"-"+p2(d.getMonth()+1)+"-"+p2(d.getDate()),fm=m=>p2(Math.floor(m/60)%24)+":"+p2(Math.round(m)%60),tm=t=>{const a=t.split(":");return +a[0]*60+ +a[1]};
@@ -187,6 +187,7 @@ let S;try{S=JSON.parse(localStorage.getItem(K))}catch(e){}
 if(!S)S={ob:false,name:"",g:"m",track:"",loc:{n:"القاهرة",lat:30.04,lng:31.24},xp:0,rank:0,quota:180,tasks:[],subs:{},streak:0,miss:0,last:day(),min:{},boss:[],pr:{},chat:{},notes:{},sched:null,slp:""};
 const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
 (function(){const o=["جبر وهندسة","تفاضل وتكامل","ميكانيكا"],h=o.filter(k=>S.subs&&S.subs[k]);if(!h.length)return;const m=S.subs["رياضة"]||{xp:0,slots:[]};h.forEach(k=>{m.xp+=S.subs[k].xp;m.slots=m.slots.concat(S.subs[k].slots);delete S.subs[k];S.tasks.forEach(t=>{if(t.subj===k)t.subj="رياضة"});if(S.chat[k]){S.chat["رياضة"]=(S.chat["رياضة"]||[]).concat(S.chat[k]);delete S.chat[k]}if(S.notes[k]){S.notes["رياضة"]=(S.notes["رياضة"]||"")+S.notes[k]+"\n";delete S.notes[k]}});S.subs["رياضة"]=m;save()})();
+(function(){if(S.track!=="art")return;const r=["فلسفة ومنطق","علم نفس واجتماع"];let ch=0;r.forEach(k=>{if(S.subs[k]){delete S.subs[k];ch=1}S.tasks.forEach(t=>{if(t.subj===k){t.subj="عام";ch=1}});if(S.chat&&S.chat[k])delete S.chat[k];if(S.notes&&S.notes[k])delete S.notes[k]});if(!S.subs["إحصاء"]){S.subs["إحصاء"]={xp:0,slots:[]};ch=1}if(ch)save()})();
 const nextT=()=>S.rank<5?R[S.rank+1][1]:null,canTrial=()=>nextT()!==null&&S.xp>=nextT();
 // ---- prayer times (Egyptian General Authority method)
 const rd=Math.PI/180,sn=a=>Math.sin(a*rd),cs=a=>Math.cos(a*rd),tn=a=>Math.tan(a*rd),asn=x=>Math.asin(x)/rd,acs=x=>Math.acos(x)/rd,at2=(y,x)=>Math.atan2(y,x)/rd,acot=x=>Math.atan(1/x)/rd,fx=(a,b)=>a-b*Math.floor(a/b);
