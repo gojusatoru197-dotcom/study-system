@@ -62,13 +62,13 @@ textarea{width:100%;resize:none}
 .g{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .st{border:1px solid var(--ln);padding:8px}.st.w{border-color:var(--bad)}.st b{display:flex;justify-content:space-between}
 .eod{text-align:center;color:var(--bad);font-family:Orbitron,Cairo,sans-serif;font-size:1.1rem}
-.ov{position:fixed;inset:0;background:rgba(0,0,10,.82);display:none;place-items:center;z-index:20;padding:20px}
+.ov{position:fixed;inset:0;background:rgba(0,0,10,.82);display:none;place-items:center;z-index:35;padding:20px}
 .ov .win{width:100%;max-width:420px;margin:0;background:var(--bg)}
 .ov p{margin:6px 0 14px;white-space:pre-line;min-height:3em}
 .full{position:fixed;inset:0;z-index:31;background:var(--bg);overflow:auto;padding:calc(16px + env(safe-area-inset-top,0px)) 16px calc(30px + env(safe-area-inset-bottom,0px));display:none}
 .full>div{max-width:560px;margin:0 auto}
 #fo{z-index:28;background:var(--bg)}
-#gate{z-index:30;background:var(--bg);display:grid;text-align:center}
+#gate{z-index:40;background:var(--bg);display:grid;text-align:center}
 h1{font-family:Orbitron,Cairo,sans-serif;font-size:2.2rem;margin:0;color:var(--ac);text-shadow:var(--gl);text-align:center}
 @media (prefers-reduced-motion:no-preference){h1{animation:gl 3s infinite}.ov.on .win{animation:pop .25s ease-out}.shake{animation:sk .5s}}
 @keyframes gl{0%,92%,100%{transform:none}94%{transform:translateX(4px);text-shadow:-3px 0 var(--bad),3px 0 var(--ac2)}96%{transform:translateX(-4px)}}
@@ -198,8 +198,9 @@ nav button{transition:color .2s,box-shadow .2s}
 <div class="full" id="fo"><div style="padding-top:30px;text-align:center">
   <div class="ring"><svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="88" stroke="rgba(80,110,200,.25)"/><circle id="rp" cx="100" cy="100" r="88" stroke-dasharray="552.9" stroke-dashoffset="552.9"/></svg><div id="clock">25:00</div></div>
   <div id="cur" style="margin:12px 0;font-weight:600"></div>
+  <div id="fpz" class="win bad" hidden><div class="hd">[ توقف للصلاة ]</div><div id="fpn" style="font-weight:700"></div><div class="mut">الجلسة متوقفة. سجّل صلاتك خلال:</div><div id="fpc" class="num" style="font-size:1.8rem;margin:6px 0">10:00</div><button id="fpb">صليت</button></div>
   <button id="stop" class="d">انسحاب (-20 XP)</button>
-  <div class="mut" style="margin-top:10px">الـ XP لا يُمنح إلا بإكمال الوقت. الخروج من الصفحة = -10 XP، و3 مرات = فشل. التركيز الكامل = بونص 20%.</div>
+  <div class="mut" style="margin-top:10px">الـ XP لا يُمنح إلا بإكمال الوقت. الخروج من الصفحة = -10 XP، و3 مرات = فشل. التركيز الكامل = بونص 20%. وقت الصلاة يوقف الجلسة 10 دقائق، ولو لم تسجّل صلاتك فيها ضاعت منك فرصة من الثلاث.</div>
 </div></div>
 
 <div class="ov" id="ov" role="alertdialog"><div class="win" id="ovw"><div class="hd" id="oh"></div><p id="ot"></p><div class="row"><button id="ok">قبول</button><button id="no" class="d" hidden>إلغاء</button></div></div></div>
@@ -321,9 +322,10 @@ function tick1(){if(!S.ob)return;const n=new Date(),T=times(n),mn=midn().getTime
  s=Math.floor((midn(tmw())-n)/1000);$("eod").textContent="نهاية اليوم بعد "+p2(Math.floor(s/3600))+":"+p2(Math.floor(s%3600/60))+":"+p2(s%60);
  const P=S.pr[day()]||(S.pr[day()]={});let ch=0;
  PR.forEach(([k,nmz])=>{const t=mn+T[k]*36e5,s=P[k]||(P[k]={});if(s.x)return;
-  if(n>=t&&!s.n){s.n=1;ch=1;if(n-t<6e5&&!s.d)msg("حان وقت الصلاة","حان الآن وقت صلاة "+nmz+".\nسجّل صلاتك خلال 10 دقائق لتأخذ +5 XP، وإلا خُصم 10 XP.")}
+  if(n>=t&&!s.n){s.n=1;ch=1;if(n-t<6e5&&!s.d)msg("حان وقت الصلاة",FS()?"حان الآن وقت صلاة "+nmz+".\nتم إيقاف الجلسة مؤقتاً. صلِّ ثم دوس «صليت» خلال 10 دقائق، وإلا ضاعت منك فرصة من فرص الخروج الثلاث وخُصم 10 XP.":"حان الآن وقت صلاة "+nmz+".\nسجّل صلاتك خلال 10 دقائق لتأخذ +5 XP، وإلا خُصم 10 XP.")}
   if(n-t>=6e5&&!s.d&&!s.p){s.p=1;ch=1;gain(-10,null,"لم تسجّل صلاة "+nmz+" خلال 10 دقائق. -10 XP")}});
  const sw=sleepWin(),m=n.getHours()*60+n.getMinutes();if(m>=sw.night&&S.slp!==day()){S.slp=day();ch=1;msg("وقت النوم","حان وقت نومك. ستستيقظ قبل الفجر بـ20 دقيقة. نوم 6 ساعات يثبّت ما درسته.")}
+ prayF(n);
  if(ch){save();render()}}
 setInterval(tick1,1000);
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>show(+b.dataset.t));
@@ -331,7 +333,7 @@ function show(i){document.querySelectorAll("nav button").forEach((x,j)=>x.classL
 // ---- guide
 const G=[
 {t:"الحالة",x:"• الرتبة والمستوى: كل XP تكسبه يرفع مستواك. الرتبة (E ثم D ثم C...) تحتاج XP كافياً ثم امتحان ترقية بدرجة 80% أو أكثر من المزيد ← البوابة.\n• الصلاة: العداد يعرض الصلاة القادمة. دوس «صليت» بعد دخول الوقت. لو سجلت خلال 10 دقائق تأخذ +5 XP، ولو مرت 10 دقائق بدون تسجيل يُخصم 10 XP.\n• اليوم: حصة التركيز اليومية بالدقائق. لو لم تكملها يُخصم 100 XP في آخر اليوم، وتزيد 15 دقيقة تلقائياً بعد كل 3 أيام نجاح.\n• النوم: 6 ساعات وتستيقظ قبل الفجر بـ20 دقيقة، ولا تعمل جلسات التركيز وقت النوم.\n• القدرات: مستوى كل مادة والمتراكم عليها، وأضعف مادة تظهر بالأحمر."},
-{t:"المهام",x:"• إضافة مهمة: اختر المادة، اكتب الاسم والمدة بالدقائق، ثم «إضافة». أنت وحدك من يضيف المهام.\n• ابدأ: يفتح مؤقتاً بمدة المهمة. عند إكماله كاملاً بدون خروج من الصفحة تأخذ XP + بونص 20% وتُحذف المهمة تلقائياً.\n• المتراكم: المهمة غير المنجزة تبقى وتظهر «متراكمة N يوم»، وتعطي 25% XP إضافية عند إنجازها. لتسجيل متراكم في مادة، أضفه كمهمة واختر المادة.\n• الحذف اليدوي متاح لدقيقتين فقط بعد الإضافة.\n• الجلسة الحرة 25د: تركيز بدون مهمة محددة.\n• الخروج من الصفحة أثناء الجلسة: -10 XP، وثلاث مرات = فشل الجلسة. الانسحاب = -20 XP."},
+{t:"المهام",x:"• إضافة مهمة: اختر المادة، اكتب الاسم والمدة بالدقائق، ثم «إضافة». أنت وحدك من يضيف المهام.\n• ابدأ: يفتح مؤقتاً بمدة المهمة. عند إكماله كاملاً بدون خروج من الصفحة تأخذ XP + بونص 20% وتُحذف المهمة تلقائياً.\n• المتراكم: المهمة غير المنجزة تبقى وتظهر «متراكمة N يوم»، وتعطي 25% XP إضافية عند إنجازها. لتسجيل متراكم في مادة، أضفه كمهمة واختر المادة.\n• الحذف اليدوي متاح لدقيقتين فقط بعد الإضافة.\n• الجلسة الحرة 25د: تركيز بدون مهمة محددة.\n• وقت الصلاة أثناء الجلسة: تظهر رسالة الصلاة فوق شاشة التركيز وتتوقف الجلسة 10 دقائق. صلِّ ثم دوس «صليت». إذا لم تسجّلها خلال 10 دقائق تضيع منك فرصة من الفرص الثلاث وتستأنف الجلسة.\n• تحذير الخروج من الشاشة الكاملة وزر «عودة» يظهران فوق شاشة التركيز أيضاً.\n• الخروج من الصفحة أثناء الجلسة: -10 XP، وثلاث مرات = فشل الجلسة. الانسحاب = -20 XP."},
 {t:"الجدول",x:"• اختر يومي أو أسبوعي أو شهري ثم «أنشئ جدولاً مثالياً».\n• يحسب المتراكم والدروس الجديدة (مراجعة بعد كل حصة) وبقية المواد، حول الصلاة والنوم والوجبات والاستراحات.\n• الترتيب: مادة أوفلاين بموعد = مراجعة الدرس الجديد قبل المتراكم. مواد أونلاين مسجلة = يخلّص كل المتراكم (من كل المواد) أولاً قبل أي محاضرة جديدة.\n• أي محاضرة أو درس يبدأ يكتمل للنهاية بدون ما تدخل وسطه مادة أخرى. لا يقطعه إلا الصلاة والوجبات والحصص ذات المواعيد.\n• بين المحاضرات استراحة، والجدول يحسب وقت الاستراحات والوجبات والصلاة، ويترك لك ساعة وقتاً حراً في آخر كل يوم قبل النوم.\n• الوجبات: فطار وغداء ووجبة مساء. الاستراحة 15 دقيقة تأتي بعد المحاضرة أو بعد نحو ساعة ونصف من المذاكرة المتواصلة، ولا تدخل في وسط المحاضرة.\n• المربع بجانب كل بند دراسة أو حصة: يشطبه ويعلن أنك خلصته فقط. لا يضيف XP ولا يحذف المهمة. الـ XP يأتي فقط من إكمال المهمة بالمؤقت لكامل مدتها.\n• أعد إنشاء الجدول كلما أضفت مهام جديدة أو غيّرت مواعيد الحصص."},
 {t:"المزيد",x:"• المواد ومواعيد الحصص: لكل مادة اختر أوفلاين (يوم ووقت) أو أونلاين (محاضرات مسجلة: اليوم وعددها بدون ساعة). اضغط على أي موعد لحذفه. ويمكنك إضافة مادة جديدة.\n• الموقع للصلاة: اختر مدينتك أو دوس «موقعي» لمواقيت أدق.\n• البوابة: امتحان أسبوعي (80% أو أكثر = +200 XP، وأقل = -50)، وامتحان الترقية عند توفر XP كافٍ (80% أو أكثر للترقية، والرسوب = -100).\n• العبارات التحفيزية: تظهر عبارة على الشاشة كل فترة تختارها (15 أو 30 دقيقة أو ساعة أو إيقاف). لا تتكرر عبارة في نفس اليوم، ولا تظهر أثناء جلسة التركيز أو وقت النوم. اضغط عليها لإخفائها.\n• إعادة ضبط كاملة: تمسح كل بياناتك نهائياً."}
 ];
@@ -385,19 +387,26 @@ $("obgo").onclick=()=>{const n=$("on").value.trim();if(!n||!og||!S.track)return 
 $("add").onclick=()=>{const n=$("tn").value.trim(),m=+$("tm").value;if(!n||!(m>=10))return msg("خطأ","اكتب اسم المهمة ومدتها 10 دقائق على الأقل.",true);
  S.tasks.push({id:Date.now(),title:n,subj:$("ts").value,min:m,date:day()});$("tn").value="";save();render()};
 // ---- focus
-let T=null;const CI=552.9;
+let T=null;const CI=552.9,FS=()=>T;
 function start(min,task){if(T)return;
  if(sleepNow())return msg("وقت النوم","النظام يحميك: لا جلسات في وقت نومك. نم الآن.");
  const sub=task&&S.subs[task.subj]?task.subj:null;
  T={end:Date.now()+min*60000,min,task,sub,leaves:0};$("cur").textContent=task?task.subj+" — "+task.title:"جلسة تركيز حر";$("fo").style.display="block";tick();T.h=setInterval(tick,500)}
-function tick(){if(!T)return;const l=Math.max(0,Math.round((T.end-Date.now())/1000));
- $("clock").textContent=p2(Math.floor(l/60))+":"+p2(l%60);$("rp").style.strokeDashoffset=CI*(1-l/(T.min*60));if(l===0)finish()}
-function endF(){$("fo").style.display="none";$("rp").style.strokeDashoffset=CI}
+function tick(){if(!T)return;const l=Math.max(0,Math.round((T.end-(T.pauseAt||Date.now()))/1000));
+ $("clock").textContent=p2(Math.floor(l/60))+":"+p2(l%60);$("rp").style.strokeDashoffset=CI*(1-l/(T.min*60));if(T.pauseAt){const r=Math.max(0,Math.ceil((T.pdl-Date.now())/1000));$("fpc").textContent=p2(Math.floor(r/60))+":"+p2(r%60)}else if(l===0)finish()}
+function endF(){$("fpz").hidden=true;$("fo").style.display="none";$("rp").style.strokeDashoffset=CI}
 function finish(){const t=T;clearInterval(t.h);T=null;let xp=t.min;if(t.task&&t.task.date<day())xp=Math.round(xp*1.25);const ok=t.leaves===0;if(ok)xp+=Math.round(xp*.2);
  if(t.task)S.tasks=S.tasks.filter(x=>x!==t.task);S.min[day()]=(S.min[day()]||0)+t.min;endF();flash();gain(xp,t.sub,ok?"تركيز كامل بدون خروج. بونص +20%\nأُنجزت المهمة وحُذفت من القائمة.":(t.task?"أُنجزت المهمة وحُذفت من القائمة.":""))}
 function abort(p,why){clearInterval(T.h);T=null;S.xp=Math.max(0,S.xp-p);save();endF();render();msg("فشل الجلسة",why+"\n-"+p+" XP\nالمهمة ما زالت في قائمتك.",true)}
 function leave(){if(!T)return;T.leaves++;S.xp=Math.max(0,S.xp-10);save();
  if(T.leaves>=3)abort(30,"خرجت 3 مرات.");else{msg("إنذار","خرجت من وضع التركيز. -10 XP.\nتبقى "+(3-T.leaves)+" فرصة قبل الفشل.",true);render()}}
+function pauseF(k,nm,t){if(!T||T.pauseAt)return;T.pauseAt=Date.now();T.pk=k;T.pdl=t+6e5;(T.pks=T.pks||[]).push(k);$("fpn").textContent="صلاة "+nm;$("fpz").hidden=false;tick()}
+function resumeF(){if(!T||!T.pauseAt)return;T.end+=Date.now()-T.pauseAt;T.pauseAt=0;T.pk=null;$("fpz").hidden=true;tick()}
+function lostChance(){if(!T)return;T.leaves++;save();if(T.leaves>=3)abort(30,"ضاعت فرصك الثلاث.");else{msg("إنذار","لم تسجّل صلاتك خلال 10 دقائق فضاعت منك فرصة.\nتبقى "+(3-T.leaves)+" فرصة قبل الفشل.\nاستؤنفت الجلسة.",true);render()}}
+function prayF(n){if(!T)return;const tt=times(n),mn=midn().getTime(),P=S.pr[day()]||(S.pr[day()]={});
+ if(T.pauseAt){const q=P[T.pk]||{};if(q.d)return resumeF();if(n.getTime()>=T.pdl){resumeF();lostChance()}return}
+ for(const [k,nm] of PR){const q=P[k]||(P[k]={}),t=mn+tt[k]*36e5;if(q.x||q.d||q.p)continue;if(n.getTime()>=t&&n.getTime()-t<6e5&&!(T.pks||[]).includes(k)){pauseF(k,nm,t);return}}}
+$("fpb").onclick=()=>{if(!T||!T.pauseAt)return;const k=T.pk,P=S.pr[day()],q=P[k]=P[k]||{},ok=!q.p;q.d=1;save();resumeF();if(ok)gain(5,null);else{render();float("✓")}};
 $("free").onclick=()=>start(25,null);
 $("stop").onclick=()=>ask("تأكيد الانسحاب","الانسحاب يخصم 20 XP. هل أنت متأكد؟",true,()=>{if(T)abort(20,"انسحبت من الجلسة.")});
 document.addEventListener("visibilitychange",()=>{if(T&&document.hidden)T.hid=true;else if(!document.hidden){if(T&&T.hid){T.hid=false;leave()}if(LK)wake()}});
