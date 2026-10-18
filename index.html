@@ -280,7 +280,7 @@ function gain(n,sub,note){const was=canTrial();S.xp=Math.max(0,S.xp+n);if(sub&&n
   d.setDate(d.getDate()+1);n++}
  if(S.miss>=3){S.miss=0;if(S.rank>0){S.rank--;S.xp=Math.min(S.xp,R[S.rank+1][1]-1);L.push("هبوط إلى الرتبة "+R[S.rank][0])}}
  const od=S.tasks.length;if(od)L.push("متراكم عليك "+od+" مهمة.");
- for(const k in S.pr)if(k<t)delete S.pr[k];for(const k in S.chk)if(k.slice(0,10)<t)delete S.chk[k];S.last=t;save();msg("تقرير الأمس",L.join("\n"),fail)})();
+ for(const k in S.pr)if(k<t)delete S.pr[k];{const c30=day(new Date(Date.now()-30*864e5));for(const k in S.chk)if(k.slice(0,10)<c30)delete S.chk[k]}S.last=t;save();msg("تقرير الأمس",L.join("\n"),fail)})();
 // ---- render
 var xpShown=0;
 function cnt(){const t=S.xp;if(RM||xpShown===t){xpShown=t;$("xp").textContent=t;return}const a=xpShown,st=performance.now();(function f(n){const q=Math.min(1,(n-st)/600);xpShown=Math.round(a+(t-a)*q);$("xp").textContent=xpShown;if(q<1)requestAnimationFrame(f)})(st)}
@@ -438,14 +438,16 @@ function plan(n){const FREE=60,now=new Date(),bq=S.tasks.slice().sort((a,b)=>a.i
   if(clr<0&&bq.length&&bq.every(x=>x.rem<=0))clr=i;
   ev.push({s:wake,e:wake,t:"z",x:"الاستيقاظ"},{s:sl,e:sl,t:"z",x:"النوم"});ev.sort((a,b)=>a.s-b.s||(a.t==="z"?-1:1));
   const dk=day(d),vis=i===0?ev.filter(e=>e.e>=from):ev;
-  days.push({l:(i===0?"اليوم":DN[d.getDay()])+" — "+dk,ev:vis.map(e=>[fm(e.s)+(e.e>e.s?" – "+fm(e.e):""),e.t,e.x,(e.t==="s"||e.t==="c")?dk+"|"+e.s+"|"+e.x:""])})}
+  days.push({l:(i===0?"اليوم":DN[d.getDay()])+" — "+dk,dk,ev:vis.map(e=>[fm(e.s)+(e.e>e.s?" – "+fm(e.e):""),e.t,e.x,(e.t==="s"||e.t==="c")?dk+"|"+e.s+"|"+e.x:""])})}
  const left=bq.reduce((a,b)=>a+Math.max(0,b.rem),0);
  return{p:n,at:day(),days,sum:"المتراكم "+tot+" دقيقة، "+(bq.length?(left?"لن ينتهي كله في هذه الفترة (تبقى "+left+" دقيقة).":"ينتهي بالكامل خلال "+((clr<0?0:clr)+1)+" يوم."):"لا يوجد متراكم.")+" الدروس الجديدة المحسوبة: "+newN+" (مراجعة 45 دقيقة بعد كل حصة)، مع تدوير بقية المواد من الأضعف للأقوى. ويُترك لك "+FREE+" دقيقة وقتاً حراً في آخر كل يوم."}}
+function dayLbl(dk){if(!dk)return"";const q=dk.split("-"),d=new Date(+q[0],+q[1]-1,+q[2]),n=new Date(),df=Math.round((d-new Date(n.getFullYear(),n.getMonth(),n.getDate()))/864e5);return(df===-1?"الأمس":df===0?"اليوم":df===1?"غداً":DN[d.getDay()])+(df>=-1&&df<=1?" ("+DN[d.getDay()]+")":"")+" — "+dk}
 function schedUI(){const c=$("sched");c.innerHTML="";const p=S.sched;if(!p)return;
  const s=document.createElement("div");s.className="win";s.innerHTML="<div class='hd'>[ الجدول ]</div><div class='mut'></div>";s.lastChild.textContent="أُنشئ "+p.at+" — "+p.sum+" المربع للتعليم فقط ولا يضيف XP.";c.appendChild(s);
  const IC={c:"🏫",s:"📚",p:"🕌",m:"🍽",b:"☕",z:"🌙",f:"🌿"};
- p.days.forEach((d,i)=>{const e=document.createElement("details");e.className="sd";if(i===0)e.open=true;
-  const ds=d.ev.filter(y=>y[3]),sm=document.createElement("summary");sm.innerHTML="<span></span><span class='mut num'></span>";sm.firstChild.textContent=d.l;
+ const tdy=day(),dkOf=x=>x.dk||((x.l||"").match(/\d{4}-\d{2}-\d{2}/)||[""])[0];let oi=p.days.findIndex(x=>dkOf(x)>=tdy);if(oi<0)oi=p.days.length-1;
+ p.days.forEach((d,i)=>{const e=document.createElement("details");e.className="sd";if(i===oi)e.open=true;
+  const ds=d.ev.filter(y=>y[3]),sm=document.createElement("summary");sm.innerHTML="<span></span><span class='mut num'></span>";sm.firstChild.textContent=dayLbl(dkOf(d))||d.l;
   const upd=()=>{sm.lastChild.textContent=ds.filter(y=>S.chk[y[3]]).length+"/"+ds.length};upd();e.appendChild(sm);
   d.ev.forEach((x,j)=>{const r=document.createElement("div"),dn=x[3]&&S.chk[x[3]];r.className="it t-"+x[1]+(dn?" dn":"");r.style.animationDelay=Math.min(j*35,700)+"ms";
    r.innerHTML="<span class='tm num'></span><span class='ic'></span><span class='tx'></span>";
@@ -457,10 +459,10 @@ function schedUI(){const c=$("sched");c.innerHTML="";const p=S.sched;if(!p)retur
    e.appendChild(r)});c.appendChild(e)})}
 $("sg").onclick=()=>{if(!Object.keys(S.subs).length)return;S.sched=plan(+$("sp").value);save();schedUI();float("✓")};
 // ---- gate / reset
+$("rs").onclick=()=>ask("إعادة ضبط","سيتم مسح كل شيء بما فيه ذاكرة المدرسين. متأكد؟",true,()=>{try{localStorage.removeItem(K)}catch(e){}LK=false;location.reload()});
 $("bb").onclick=()=>{const v=+$("bs").value;if($("bs").value===""||v<0||v>100)return;$("bs").value="";
  if($("bt").value==="t"&&canTrial()){if(v>=80){S.rank++;save();render();flash();msg("ترقية","تهانينا يا "+S.name+". أصبحت من الرتبة "+R[S.rank][0]+" — "+R[S.rank][2])}else gain(-100,null,"رسبت في امتحان الترقية. ذاكر وارجع.")}
  else{S.boss.push(v);v>=80?gain(200,null,"هزمت زعيم الأسبوع."):gain(-50,null,"هزمك زعيم الأسبوع.")}};
-$("rs").onclick=()=>ask("إعادة ضبط","سيتم مسح كل شيء بما فيه ذاكرة المدرسين. متأكد؟",true,()=>{try{localStorage.removeItem(K)}catch(e){}LK=false;location.reload()});
 // ---- lockdown
 let LK=false,fsOK=false,wl=null;
 async function wake(){try{wl=await navigator.wakeLock.request("screen")}catch(e){}}
