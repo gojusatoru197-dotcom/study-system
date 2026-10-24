@@ -262,6 +262,12 @@ body[data-rk="F"] .emb{--ac:#ff3b4e;--ac2:#8a1020;--gl:0 0 12px #ff3b4e}
   <div class="win"><div class="hd">[ العبارات التحفيزية ]</div>
     <div class="row"><span class="mut">عبارة جديدة كل</span><select id="mqi" aria-label="تكرار العبارات"><option value="15">15 دقيقة</option><option value="30">30 دقيقة</option><option value="60">ساعة</option><option value="0">إيقاف</option></select></div>
     <div class="mut" style="margin-top:6px">لا تتكرر العبارة في نفس اليوم، ولا تظهر خارج الجلسة وقت النوم. وأثناء جلسة التركيز تظهر رسائل تشجيع خاصة بتقدّم مهمتك.</div></div>
+  <div class="win" id="bkw"><div class="hd">[ نسخة احتياطية ]</div>
+    <div class="mut" style="margin-bottom:6px">صدّر كل بياناتك (الرتبة والـ XP والمهام والجدول والإعدادات والملخصات بصورها) في ملف، واستورده في أي رابط أو جهاز. الأسئلة المحمّلة لا تدخل في الملف لأنها تُحمَّل من جديد تلقائياً.</div>
+    <div class="row"><button id="bke" style="flex:1">تصدير</button><button id="bki" style="flex:1">استيراد</button></div>
+    <input id="bkf" type="file" accept=".json,application/json" hidden>
+    <div class="mut" id="bkn" style="margin-top:6px;white-space:pre-line"></div>
+  </div>
   <div class="win" id="impw"><div class="hd">[ استيراد الأسئلة ]</div>
     <div class="mut" style="margin-bottom:6px">تُحمَّل الأسئلة (اختيار من متعدد) تلقائياً في الخلفية وتُحفظ داخل متصفحك، فتعمل «البوابة» بدون نت. هنا تقدر تتابع التحميل أو تحدّثه يدوياً.</div>
     <input id="imk" type="password" placeholder="مفتاح الخدمة" autocomplete="off" aria-label="مفتاح الخدمة">
@@ -923,6 +929,41 @@ if(PROXY){el("imk").style.display="none";el("imks").style.display="none"}
 try{if(localStorage.getItem(KK))el("imk").placeholder="المفتاح محفوظ ✓"}catch(e){}
 fill();
 openDB().then(async d=>{db=d;(await loadAll()).forEach(([k,v])=>{RECS[k]=v;BANK[k]={lessons:v.lessons,q:v.q}});try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}info();if(el("t5").classList.contains("on"))gateUI();setTimeout(auto,4000)});
+})();
+</script>
+<script>
+// ---- backup: export / import all user data
+(function(){
+const el=i=>document.getElementById(i);
+const openS=()=>new Promise((ok,no)=>{try{const r=indexedDB.open("nizam",1);r.onupgradeneeded=()=>r.result.createObjectStore("sums",{keyPath:"id"});r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)}catch(e){no(e)}});
+const sumsAll=()=>openS().then(d=>new Promise(ok=>{try{const q=d.transaction("sums").objectStore("sums").getAll();q.onsuccess=()=>ok(q.result||[]);q.onerror=()=>ok([])}catch(e){ok([])}})).catch(()=>[]);
+const sumsPut=a=>a.length?openS().then(d=>new Promise(ok=>{const t=d.transaction("sums","readwrite"),s=t.objectStore("sums");a.forEach(x=>{if(x&&x.id!=null)s.put(x)});t.oncomplete=()=>ok(true);t.onerror=()=>ok(false);t.onabort=()=>ok(false)})).catch(()=>false):Promise.resolve(true);
+const note=t=>{el("bkn").textContent=t};
+el("bke").onclick=async()=>{
+ try{
+  const sums=await sumsAll(),o={app:"nizam-backup",v:1,ts:Date.now(),data:S,sums},
+   b=new Blob([JSON.stringify(o)],{type:"application/json"}),u=URL.createObjectURL(b),a=document.createElement("a");
+  a.href=u;a.download="nizam-backup-"+day()+".json";document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(u),5000);
+  note("تم التصدير ("+sums.length+" ملخص). احفظ الملف في مكان آمن.");float("✓ تم")
+ }catch(e){msg("تعذر التصدير","حصل خطأ أثناء إنشاء الملف.",true)}};
+function apply(o){
+ const ok=o&&o.app==="nizam-backup"&&o.data&&typeof o.data==="object"&&typeof o.data.xp==="number"&&o.data.subs&&typeof o.data.subs==="object";
+ if(!ok)return msg("ملف غير صالح","هذا الملف ليس نسخة احتياطية من النظام.",true);
+ if(T)return msg("غير متاح","أنهِ جلسة التركيز الجارية أولاً ثم استورد.",true);
+ ask("استيراد نسخة احتياطية","سيتم استبدال كل بياناتك الحالية (الرتبة والـ XP والمهام والجدول والإعدادات) ببيانات النسخة"+(o.ts?" المحفوظة بتاريخ "+day(new Date(o.ts)):"")+".\nالملخصات تُدمج مع الموجودة. متأكد؟",true,async()=>{
+  let str;try{str=JSON.stringify(o.data);localStorage.setItem(K,str)}catch(e){return msg("تعذر الحفظ","المتصفح لم يسمح بحفظ البيانات، ربما المساحة ممتلئة.",true)}
+  await sumsPut(Array.isArray(o.sums)?o.sums:[]);
+  Object.keys(S).forEach(k=>delete S[k]);Object.assign(S,o.data);
+  try{localStorage.setItem(K,str)}catch(e){}
+  LK=false;location.reload()})}
+el("bki").onclick=()=>el("bkf").click();
+el("bkf").onchange=()=>{
+ const f=el("bkf").files[0];el("bkf").value="";if(!f)return;
+ const r=new FileReader();
+ r.onload=()=>{let o;try{o=JSON.parse(r.result)}catch(e){return msg("ملف غير صالح","الملف ليس نسخة احتياطية صحيحة.",true)}apply(o)};
+ r.onerror=()=>msg("تعذر القراءة","لم أستطع قراءة الملف.",true);
+ r.readAsText(f)};
 })();
 </script>
 </body>
