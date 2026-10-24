@@ -262,6 +262,14 @@ body[data-rk="F"] .emb{--ac:#ff3b4e;--ac2:#8a1020;--gl:0 0 12px #ff3b4e}
   <div class="win"><div class="hd">[ العبارات التحفيزية ]</div>
     <div class="row"><span class="mut">عبارة جديدة كل</span><select id="mqi" aria-label="تكرار العبارات"><option value="15">15 دقيقة</option><option value="30">30 دقيقة</option><option value="60">ساعة</option><option value="0">إيقاف</option></select></div>
     <div class="mut" style="margin-top:6px">لا تتكرر العبارة في نفس اليوم، ولا تظهر خارج الجلسة وقت النوم. وأثناء جلسة التركيز تظهر رسائل تشجيع خاصة بتقدّم مهمتك.</div></div>
+  <div class="win" id="impw"><div class="hd">[ استيراد الأسئلة ]</div>
+    <div class="mut" style="margin-bottom:6px">تُحمَّل الأسئلة (اختيار من متعدد) تلقائياً في الخلفية وتُحفظ داخل متصفحك، فتعمل «البوابة» بدون نت. هنا تقدر تتابع التحميل أو تحدّثه يدوياً.</div>
+    <input id="imk" type="password" placeholder="مفتاح الخدمة" autocomplete="off" aria-label="مفتاح الخدمة">
+    <div class="row" style="margin-top:6px"><button id="imks">حفظ المفتاح</button><button id="imt">اختبار الاتصال</button></div>
+    <div class="row" style="margin-top:6px"><select id="ims" aria-label="المادة"></select></div>
+    <div class="row" style="margin-top:6px"><button id="imgo" style="flex:1">ابدأ الاستيراد</button><button id="imst" disabled>إيقاف</button><button id="imdl" class="d">مسح</button></div>
+    <div class="mut" id="imn" style="margin-top:6px;white-space:pre-line"></div>
+  </div>
   <div class="win bad"><div class="hd">[ خطر ]</div><button id="rs" class="d">إعادة ضبط كاملة</button></div>
 </section>
 <section class="tab" id="tg"><div class="win"><div class="hd">[ الدليل ]</div><div class="mut" style="margin-bottom:6px">شرح كل شيء في النظام. وفي كل تبويب زر «عرض الدليل» يشرح لك ما أمامك مباشرة.</div><div id="gl"></div></div></section>
@@ -691,9 +699,9 @@ function exBuild(st){const ty=st.type,sel=Object.keys(st.sel).filter(s=>st.sel[s
  const mn=ty==="w"?(Object.keys(S.wl).length?1:3):ty==="t"?5:1,E={type:ty,day:day(),subs:sel,cur:0,qi:0,qs:{},ans:{},tx:{},es:{},L:{},lv:0,tl:0,ph:"take"};let tot=0;
  if(ty!=="f")for(const s in S.subs)if(!isOpt(s)&&!sel.includes(s))return isAz()?"الاختبار يشمل المواد المشتركة مع الشعب العامة، والباقي اختياري.":"الاختبار يشمل كل المواد ما عدا اللغة الثانية.";
  for(const s of sel){const L=[...st.les[s]].sort((a,b)=>a-b);if(L.length<mn)return"مادة "+s+": اختر "+mn+" دروس على الأقل.";
-  const n=ty==="w"?Math.max(10,L.length):ty==="t"?Math.max(15,Math.ceil(L.length*1.5)):Math.max(1,st.cnt|0),nm=st.mix===1?n:st.mix===2?0:Math.ceil(n/2),ne=n-nm;
+  let n=ty==="w"?Math.max(10,L.length):ty==="t"?Math.max(15,Math.ceil(L.length*1.5)):Math.max(1,st.cnt|0),nm=st.mix===1?n:st.mix===2?0:Math.ceil(n/2),ne=n-nm;
   let pool=bq(s).filter(q=>L.includes(q.l));if(ty==="f"&&st.diff)pool=pool.filter(q=>q.d===st.diff);
-  const pm=pool.filter(q=>q.t==="mcq"),pe=pool.filter(q=>q.t!=="mcq");
+  const pm=pool.filter(q=>q.t==="mcq"),pe=pool.filter(q=>q.t!=="mcq");if(!pe.length&&st.mix!==2){nm=n;ne=0}
   if(pm.length<nm||pe.length<ne)return"مادة "+s+": الأسئلة المتاحة لا تكفي ("+pm.length+" اختيار و"+pe.length+" مقالي). قلل العدد أو زد الدروس.";
   E.qs[s]=[...pick(pm,nm,ty),...pick(pe,ne,ty)].map(q=>q.id);E.L[s]=L;tot+=nm*60+ne*300}
  E.tl=ty==="f"?(st.tm|0)*60:tot;E.tm=E.tl>0?1:0;sel.forEach(s=>E.qs[s].forEach(id=>S.used[id]=1));S.exa=E;save();exTake()}
@@ -822,6 +830,100 @@ $("fsb").onclick=async()=>{try{await document.documentElement.requestFullscreen(
 $("act").onclick=()=>{lock();$("act").hidden=true;const ls=["[النظام] جارٍ التحقق من اللاعب: "+S.name+"...","[النظام] تفعيل وضع القفل...","[النظام] مرحباً بك. لا تفرّ."];let i=0;const b=$("boot");b.textContent="";
  const n=()=>{if(i<ls.length){b.textContent+=ls[i++]+"\n";setTimeout(n,RM?0:550)}else setTimeout(()=>{$("gate").style.display="none";$("act").hidden=false;b.textContent="";render()},RM?0:500)};n()};
 if(!S.ob){$("gate").style.display="none";$("ob").style.display="block"}else{$("gn").textContent="اللاعب: "+S.name;render();tick1();schedSync()}
+</script>
+<script>
+// ---- import questions from quiz API (IndexedDB, resumable)
+(function(){
+const PROXY="https://study-system.freepage.cc/proxy.php",BASE="https://nwes.serv00.net/bot/api/",YR=1,LIM=970,KK="solo-api-key",CK="solo-api-cnt",
+NM={"اللغة العربية":"عربي","اللغة الإنجليزية":"إنجليزي","الرياضيات":"رياضة","الأحياء":"أحياء","الكيمياء":"كيمياء","الفيزياء":"فيزياء","التاريخ":"تاريخ","الجغرافيا":"جغرافيا","الإحصاء":"إحصاء"},
+FATAL=["LIMIT","NOKEY","invalid_key","key_disabled","daily_limit_reached","busy","upstream"];
+let db=null,RECS={},run=false,stop=false;
+const el=i=>document.getElementById(i);
+function openDB(){return new Promise(res=>{try{const r=indexedDB.open("solo-bank",1);r.onupgradeneeded=()=>r.result.createObjectStore("s");r.onsuccess=()=>res(r.result);r.onerror=()=>res(null)}catch(e){res(null)}})}
+function loadAll(){return new Promise(res=>{if(!db)return res([]);const o=[];try{const c=db.transaction("s").objectStore("s").openCursor();c.onsuccess=()=>{const x=c.result;if(x){o.push([x.key,x.value]);x.continue()}else res(o)};c.onerror=()=>res(o)}catch(e){res(o)}})}
+function put(k,v){return new Promise(res=>{if(!db)return res();try{const t=db.transaction("s","readwrite");t.objectStore("s").put(v,k);t.oncomplete=()=>res();t.onerror=()=>res();t.onabort=()=>res()}catch(e){res()}})}
+function del(k){return new Promise(res=>{if(!db)return res();try{const t=db.transaction("s","readwrite");t.objectStore("s").delete(k);t.oncomplete=()=>res();t.onerror=()=>res()}catch(e){res()}})}
+const getC=()=>{try{const c=JSON.parse(localStorage.getItem(CK));return c&&c.d===day()?c.n:0}catch(e){return 0}};
+const setC=n=>{try{localStorage.setItem(CK,JSON.stringify({d:day(),n}))}catch(e){}};
+async function api(p){
+ let u;
+ if(PROXY)u=PROXY+(PROXY.indexOf("?")<0?"?":"&")+p;
+ else{
+  if(getC()>=LIM)throw new Error("LIMIT");
+  const k=localStorage.getItem(KK)||"";if(!k)throw new Error("NOKEY");
+  setC(getC()+1);u=BASE+"?key="+encodeURIComponent(k)+"&"+p}
+ const r=await fetch(u),j=await r.json();
+ if(!j||!j.ok)throw new Error(j&&j.error||"ERR");
+ return j}
+const errTxt=e=>{const m=e&&e.message||"";return m==="STOP"?"تم الإيقاف. التقدم محفوظ وتقدر تكمل بعدين.":m==="LIMIT"?"وصلت للحد اليومي (970 طلب من هذا الجهاز). كمّل بكرة.":m==="NOKEY"?"اكتب المفتاح واحفظه أولاً.":m==="invalid_key"?"المفتاح غير صحيح.":m==="key_disabled"?"المفتاح موقوف من صاحب الخدمة.":m==="daily_limit_reached"||m==="busy"||m==="upstream"?"الخدمة مشغولة الآن. هيكمل التحميل لاحقاً.":(e instanceof TypeError)?"تعذر الاتصال: إما لا يوجد إنترنت أو المتصفح منع الطلب (CORS).":"خطأ: "+m};
+const qk=t=>String(t).replace(/\s+/g,"").slice(0,160),dif=t=>/صعب|متقدم|تفوق/.test(t||"")?3:2;
+function fill(){const e=el("ims"),v=e.value;e.textContent="";Object.keys(S.subs).forEach(s=>{const o=document.createElement("option");o.value=s;o.textContent=s;e.append(o)});if(v)e.value=v;info()}
+function info(){if(run)return;const s=el("ims").value,r=RECS[s];el("imn").textContent=(r?"المحفوظ: "+r.q.length+" سؤال في "+r.lessons.length+" درس.":"لا توجد أسئلة محفوظة لهذه المادة.")+"\nطلبات اليوم من هذا الجهاز: "+getC()+" / 1000"}
+async function subj(s){const j=await api("action=folders&parent_id="+YR);return j.folders.filter(f=>f.parent_id===YR&&f.type==="subject").find(f=>(NM[f.name]||f.name)===s)}
+async function imp(s){
+ const out=t=>{el("imn").textContent=t};run=true;stop=false;el("imgo").disabled=true;el("imst").disabled=false;
+ let r=null,ok=true;
+ try{
+  out("جارٍ البحث عن المادة...");
+  const sf=await subj(s);if(!sf){out("هذه المادة غير موجودة في الخدمة للصف الثالث الثانوي.");return true}
+  r=RECS[s]||{lessons:[],lids:[],q:[],done:{},tree:null,listed:{},qz:[]};RECS[s]=r;
+  if(!r.tree){
+   const tree=[{id:sf.id,name:"عام",type:"subject"}];
+   for(let i=0;i<tree.length;i++){
+    if(stop)throw new Error("STOP");
+    const n=tree[i];if(n.type==="lesson")continue;
+    const j=await api("action=folders&parent_id="+n.id);
+    j.folders.filter(f=>f.parent_id===n.id).forEach(f=>{if(!tree.some(x=>x.id===f.id))tree.push({id:f.id,name:f.name,type:f.type})});
+    out("قراءة دروس المادة: "+tree.length+" عنصر")}
+   r.tree=tree;await put(s,r)}
+  const names={};r.tree.forEach(f=>names[f.id]=f.name);
+  const inq=new Set(r.qz.map(z=>z.id));
+  for(const f of r.tree.slice().reverse()){
+   if(r.listed[f.id])continue;if(stop)throw new Error("STOP");
+   let pg=1,pages=1;
+   do{const j=await api("action=quizzes&folder_id="+f.id+"&page="+pg);pages=j.pages||1;
+    (j.quizzes||[]).forEach(z=>{if(z.verified==1&&!inq.has(z.id)){inq.add(z.id);r.qz.push({id:z.id,f:f.id,t:z.title})}});pg++}while(pg<=pages);
+   r.listed[f.id]=1;out("قراءة قوائم الاختبارات: "+Object.keys(r.listed).length+" / "+r.tree.length+"\nاختبارات موثقة: "+r.qz.length)}
+  await put(s,r);
+  const todo=r.qz.filter(z=>!r.done[z.id]),seen=new Set(r.q.map(q=>qk(q.q)));let dn=0,since=0;
+  for(let i=0;i<todo.length;i+=3){
+   if(stop)throw new Error("STOP");
+   const res=await Promise.all(todo.slice(i,i+3).map(z=>api("action=quiz&id="+z.id).then(j=>[z,j],e=>[z,e])));
+   for(const [z,j] of res){
+    if(j instanceof Error){if(FATAL.includes(j.message)||(j instanceof TypeError))throw j;continue}
+    let li=r.lids.indexOf(z.f);if(li<0){li=r.lids.length;r.lids.push(z.f);r.lessons.push(names[z.f]||"درس")}
+    ((j.quiz&&j.quiz.questions)||[]).forEach((x,k)=>{
+     if(!x||!x.question||!Array.isArray(x.options)||x.options.length<2||!Number.isInteger(x.correct)||x.correct<0||x.correct>=x.options.length)return;
+     const key=qk(x.question);if(seen.has(key))return;seen.add(key);
+     r.q.push({id:"a"+z.id+"_"+k,l:li,d:dif(z.t),t:"mcq",q:String(x.question),o:x.options.map(String),a:x.correct,e:x.explanation?String(x.explanation):""})});
+    r.done[z.id]=1;dn++;since++}
+   BANK[s]={lessons:r.lessons,q:r.q};
+   if(since>=10){since=0;await put(s,r)}
+   out("تحميل الاختبارات: "+Math.min(i+3,todo.length)+" / "+todo.length+"\nالأسئلة المحفوظة: "+r.q.length+"\nطلبات اليوم: "+getC()+" / 1000")}
+  r.fin=true;out("تم ✓ حُمّلت أسئلة "+s+": "+r.q.length+" سؤال في "+r.lessons.length+" درس.");
+ }catch(e){ok=false;out(errTxt(e)+(r?"\nالمحفوظ حتى الآن: "+r.q.length+" سؤال.":""))}
+ finally{
+  if(r){BANK[s]={lessons:r.lessons,q:r.q};await put(s,r)}
+  run=false;el("imgo").disabled=false;el("imst").disabled=true;
+  if(el("t5").classList.contains("on"))gateUI()}
+ return ok}
+el("imks").onclick=()=>{const v=el("imk").value.trim();if(!v)return msg("المفتاح","اكتب المفتاح أولاً.",true);try{localStorage.setItem(KK,v)}catch(e){}el("imk").value="";el("imk").placeholder="المفتاح محفوظ ✓";float("✓ تم")};
+el("imt").onclick=async()=>{const o=t=>{el("imn").textContent=t};if(run)return;o("جارٍ الاختبار...");try{await api("action=ping");const j=await api("action=folders&parent_id="+YR);o("الاتصال شغال ✓\nمواد الصف الثالث الثانوي في الخدمة: "+j.folders.filter(f=>f.parent_id===YR&&f.type==="subject").length)}catch(e){o(errTxt(e))}};
+el("imgo").onclick=()=>{if(run)return;const s=el("ims").value;if(!s)return;imp(s)};
+el("imst").onclick=()=>{stop=true};
+el("imdl").onclick=()=>{if(run)return;const s=el("ims").value;if(!s||!RECS[s])return msg("مسح","لا توجد أسئلة محفوظة لهذه المادة.",true);ask("مسح الأسئلة","سيتم حذف كل أسئلة "+s+" المستوردة من هذا الجهاز. متأكد؟",true,async()=>{delete BANK[s];delete RECS[s];await del(s);info()})};
+el("ims").onchange=info;el("ims").addEventListener("focus",fill);
+async function auto(){
+ if(!PROXY||run||!S.ob||(typeof navigator!=="undefined"&&navigator.onLine===false))return;
+ const subs=Object.keys(S.subs).filter(s=>!(RECS[s]&&RECS[s].fin));if(!subs.length)return;
+ try{toast("جارٍ تحميل الأسئلة في الخلفية...")}catch(e){}
+ for(const s of subs){if(run)return;if(!(await imp(s)))return}
+ try{toast("اكتمل تحميل الأسئلة ✓")}catch(e){}}
+if(PROXY){el("imk").style.display="none";el("imks").style.display="none"}
+try{if(localStorage.getItem(KK))el("imk").placeholder="المفتاح محفوظ ✓"}catch(e){}
+fill();
+openDB().then(async d=>{db=d;(await loadAll()).forEach(([k,v])=>{RECS[k]=v;BANK[k]={lessons:v.lessons,q:v.q}});try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}info();if(el("t5").classList.contains("on"))gateUI();setTimeout(auto,4000)});
+})();
 </script>
 </body>
 </html>
